@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Events</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .topnav {
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            padding: 15px 30px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .topnav .brand {
+            color: white; font-size: 1.3rem;
+            font-weight: 700; text-decoration: none;
+        }
+        .topnav a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none; margin-left: 20px; font-size: 0.9rem;
+        }
+        .topnav a:hover { color: white; }
+        .page-header {
+            background: white; padding: 25px 30px;
+            display: flex; justify-content: space-between;
+            align-items: center; border-bottom: 1px solid #e9ecef;
+        }
+        .event-card {
+            background: white; border: none;
+            border-radius: 16px; overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .event-header {
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            padding: 20px; color: white;
+        }
+        .event-date-badge {
+            background: rgba(255,255,255,0.2);
+            border-radius: 10px; padding: 8px 15px;
+            font-size: 0.85rem; display: inline-block;
+        }
+        .event-body { padding: 20px; }
+        .tag {
+            background: #fff3e0; color: #e65100;
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <a href="/dashboard" class="brand">
+        <i class="bi bi-mortarboard-fill me-2"></i>Alumni Portal
+    </a>
+    <div>
+        <a href="/alumni"><i class="bi bi-people me-1"></i>Alumni</a>
+        <a href="/students"><i class="bi bi-person-badge me-1"></i>Students</a>
+        <a href="/jobs"><i class="bi bi-briefcase me-1"></i>Jobs</a>
+        <a href="/logout" style="color:#ffccbc;">
+            <i class="bi bi-box-arrow-left me-1"></i>Logout
+        </a>
+    </div>
+</div>
+
+<div class="page-header">
+    <div>
+        <h4 class="fw-bold mb-1">
+            <i class="bi bi-calendar-event text-warning me-2"></i>Events
+        </h4>
+        <p class="text-muted mb-0">
+            <strong th:text="${totalCount}">0</strong> events found
+        </p>
+    </div>
+    <a href="/events/add" class="btn btn-warning rounded-3 px-4"
+       sec:authorize="hasRole('ADMIN')">
+        <i class="bi bi-calendar-plus me-2"></i>Add Event
+    </a>
+</div>
+
+<div class="container-fluid p-4">
+
+    <!-- Search -->
+    <div class="card border-0 shadow-sm rounded-3 p-3 mb-4">
+        <form th:action="@{/events}" method="get" class="d-flex gap-2">
+            <input type="text" name="keyword"
+                   th:value="${keyword}"
+                   class="form-control rounded-3"
+                   placeholder="Search events by title or location...">
+            <button type="submit" class="btn btn-warning rounded-3 px-4">
+                <i class="bi bi-search me-1"></i>Search
+            </button>
+            <a href="/events"
+               class="btn btn-outline-secondary rounded-3"
+               th:if="${keyword != null}">Clear</a>
+        </form>
+    </div>
+
+    <!-- Messages -->
+    <div th:if="${successMsg}"
+         class="alert alert-success alert-dismissible rounded-3 mb-4">
+        <i class="bi bi-check-circle me-2"></i>
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${eventList.empty}" class="text-center py-5">
+        <i class="bi bi-calendar-x" style="font-size:4rem; color:#ccc;"></i>
+        <h5 class="text-muted mt-3">No events found</h5>
+        <a href="/events/add" class="btn btn-warning mt-3"
+           sec:authorize="hasRole('ADMIN')">
+            <i class="bi bi-calendar-plus me-2"></i>Create First Event
+        </a>
+    </div>
+
+    <!-- Events Grid -->
+    <div class="row g-4" th:if="${!eventList.empty}">
+        <div class="col-md-6 col-lg-4"
+             th:each="event : ${eventList}">
+            <div class="event-card shadow-sm">
+                <div class="event-header">
+                    <h5 class="fw-bold mb-2"
+                        th:text="${event.title}"></h5>
+                    <span class="event-date-badge">
+                        <i class="bi bi-calendar me-1"></i>
+                        <span th:if="${event.eventDate != null}"
+                              th:text="${event.eventDate}"></span>
+                        <span th:unless="${event.eventDate != null}">
+                            Date TBD
+                        </span>
+                    </span>
+                </div>
+                <div class="event-body">
+                    <p class="text-muted small mb-2"
+                       th:if="${event.location != null}">
+                        <i class="bi bi-geo-alt me-1 text-danger"></i>
+                        <span th:text="${event.location}"></span>
+                    </p>
+                    <p class="text-muted small mb-3"
+                       th:if="${event.eventTime != null}">
+                        <i class="bi bi-clock me-1 text-primary"></i>
+                        <span th:text="${event.eventTime}"></span>
+                    </p>
+                    <p class="small text-muted mb-3"
+                       th:if="${event.description != null}"
+                       th:text="${#strings.abbreviate(event.description, 80)}">
+                    </p>
+                    <div class="d-flex gap-2">
+                        <a th:href="@{/events/view/{id}(id=${event.id})}"
+                           class="btn btn-warning btn-sm flex-fill rounded-3">
+                            <i class="bi bi-eye me-1"></i>View
+                        </a>
+                        <a th:href="@{/events/edit/{id}(id=${event.id})}"
+                           class="btn btn-outline-warning btn-sm rounded-3"
+                           sec:authorize="hasRole('ADMIN')">
+                            <i class="bi bi-pencil"></i>
+                        </a>
+                        <a th:href="@{/events/delete/{id}(id=${event.id})}"
+                           class="btn btn-outline-danger btn-sm rounded-3"
+                           sec:authorize="hasRole('ADMIN')"
+                           onclick="return confirm('Delete this event?')">
+                            <i class="bi bi-trash"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumni Directory</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .topnav {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .topnav .brand { color: white; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+        .topnav a { color: rgba(255,255,255,0.85); text-decoration: none; margin-left: 20px; }
+        .search-banner {
+            background: linear-gradient(135deg, #1a237e, #1565c0);
+            padding: 40px; color: white; text-align: center;
+        }
+        .search-box {
+            max-width: 600px; margin: 20px auto 0;
+            display: flex; gap: 10px;
+        }
+        .search-box input {
+            flex: 1; border-radius: 12px; border: none;
+            padding: 14px 20px; font-size: 1rem;
+        }
+        .search-box button {
+            border-radius: 12px; padding: 14px 25px;
+            background: #ffd54f; border: none;
+            font-weight: 700; color: #333;
+        }
+        .alumni-card {
+            background: white; border-radius: 16px;
+            padding: 22px; border: none;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .alumni-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+        }
+        .avatar {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.4rem; font-weight: 700;
+        }
+        .tag {
+            background: #e8eaf6; color: #1a237e;
+            border-radius: 20px; padding: 3px 10px;
+            font-size: 0.75rem; font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <a href="/dashboard" class="brand">
+        <i class="bi bi-mortarboard-fill me-2"></i>Alumni Portal
+    </a>
+    <div>
+        <a href="/events"><i class="bi bi-calendar me-1"></i>Events</a>
+        <a href="/jobs"><i class="bi bi-briefcase me-1"></i>Jobs</a>
+        <a href="/logout" style="color:#ff8a80;">
+            <i class="bi bi-box-arrow-left me-1"></i>Logout
+        </a>
+    </div>
+</div>
+
+<!-- SEARCH BANNER -->
+<div class="search-banner">
+    <h3 class="fw-bold mb-2">
+        <i class="bi bi-search me-2"></i>Alumni Directory
+    </h3>
+    <p class="opacity-85 mb-0">
+        Search and connect with alumni by name, company, or department
+    </p>
+    <form th:action="@{/alumni/directory}" method="get">
+        <div class="search-box">
+            <input type="text" name="keyword"
+                   th:value="${keyword}"
+                   placeholder="Search by name, company, department...">
+            <button type="submit">
+                <i class="bi bi-search me-1"></i>Search
+            </button>
+        </div>
+    </form>
+</div>
+
+<div class="container-fluid p-4">
+
+    <!-- Results Count -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <p class="text-muted mb-0">
+            <strong th:text="${totalCount}">0</strong> alumni found
+            <span th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+                for "<strong th:text="${keyword}"></strong>"
+            </span>
+        </p>
+        <a href="/alumni/directory" class="btn btn-outline-secondary btn-sm rounded-3"
+           th:if="${keyword != null and !#strings.isEmpty(keyword)}">
+            <i class="bi bi-x me-1"></i>Clear Search
+        </a>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${alumniList.empty}" class="text-center py-5">
+        <i class="bi bi-search" style="font-size:4rem; color:#ccc;"></i>
+        <h5 class="text-muted mt-3">No alumni found</h5>
+        <a href="/alumni/directory" class="btn btn-primary mt-3">
+            Show All Alumni
+        </a>
+    </div>
+
+    <!-- Alumni Grid -->
+    <div class="row g-4" th:if="${!alumniList.empty}">
+        <div class="col-md-6 col-lg-4 col-xl-3"
+             th:each="alumni : ${alumniList}">
+            <div class="alumni-card shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="avatar"
+                         th:text="${#strings.substring(alumni.fullName,0,1)}">
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1"
+                            th:text="${alumni.fullName}"></h6>
+                        <span class="tag"
+                              th:text="${alumni.department != null ?
+                              alumni.department : 'Alumni'}"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <p class="mb-1 small text-muted"
+                       th:if="${alumni.company != null}">
+                        <i class="bi bi-building me-1 text-primary"></i>
+                        <span th:text="${alumni.company}"></span>
+                    </p>
+                    <p class="mb-1 small text-muted"
+                       th:if="${alumni.designation != null}">
+                        <i class="bi bi-person-badge me-1 text-success"></i>
+                        <span th:text="${alumni.designation}"></span>
+                    </p>
+                    <p class="mb-0 small text-muted"
+                       th:if="${alumni.location != null}">
+                        <i class="bi bi-geo-alt me-1 text-danger"></i>
+                        <span th:text="${alumni.location}"></span>
+                    </p>
+                </div>
+
+                <a th:href="@{/alumni/view/{id}(id=${alumni.id})}"
+                   class="btn btn-outline-primary btn-sm w-100 rounded-3">
+                    <i class="bi bi-eye me-1"></i>View Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

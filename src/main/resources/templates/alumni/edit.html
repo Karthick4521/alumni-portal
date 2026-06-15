@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Alumni</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .topnav {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            padding: 15px 30px; display: flex;
+            justify-content: space-between; align-items: center;
+        }
+        .topnav .brand { color: white; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+        .form-card {
+            background: white; border-radius: 20px;
+            padding: 40px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+        }
+        .section-title {
+            font-size: 0.8rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            color: #f57c00; border-bottom: 2px solid #fff3e0;
+            padding-bottom: 8px; margin-bottom: 20px;
+        }
+        .form-label { font-weight: 600; font-size: 0.88rem; color: #444; }
+        .form-control, .form-select {
+            border-radius: 10px; border: 2px solid #e9ecef; padding: 10px 14px;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #f57c00;
+            box-shadow: 0 0 0 0.2rem rgba(245,124,0,0.1);
+        }
+        .btn-update {
+            background: linear-gradient(135deg, #e65100, #f57c00);
+            border: none; border-radius: 10px;
+            padding: 12px 35px; color: white; font-weight: 600;
+        }
+        .btn-update:hover { color: white; opacity: 0.9; }
+    </style>
+</head>
+<body>
+
+<div class="topnav">
+    <a href="/dashboard" class="brand">
+        <i class="bi bi-mortarboard-fill me-2"></i>Alumni Portal
+    </a>
+</div>
+
+<div class="container py-4" style="max-width: 850px;">
+
+    <nav class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="/alumni">Alumni</a></li>
+            <li class="breadcrumb-item active">Edit Alumni</li>
+        </ol>
+    </nav>
+
+    <div class="form-card">
+        <h4 class="fw-bold mb-1" style="color:#e65100;">
+            <i class="bi bi-pencil-square me-2"></i>Edit Alumni Profile
+        </h4>
+        <p class="text-muted mb-4">Update the alumni information below</p>
+
+        <form th:action="@{/alumni/edit/{id}(id=${alumni.id})}"
+              th:object="${alumni}" method="post">
+
+            <p class="section-title"><i class="bi bi-person me-2"></i>Personal Information</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Full Name *</label>
+                    <input type="text" th:field="*{fullName}" class="form-control">
+                    <span class="text-danger small"
+                          th:if="${#fields.hasErrors('fullName')}"
+                          th:errors="*{fullName}"></span>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Phone Number</label>
+                    <input type="text" th:field="*{phone}" class="form-control">
+                </div>
+            </div>
+
+            <p class="section-title"><i class="bi bi-book me-2"></i>Academic Information</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-4">
+                    <label class="form-label">Department</label>
+                    <select th:field="*{department}" class="form-select">
+                        <option value="">Select Department</option>
+                        <option value="Computer Science">Computer Science</option>
+                        <option value="Information Technology">Information Technology</option>
+                        <option value="Electronics">Electronics</option>
+                        <option value="Mechanical">Mechanical</option>
+                        <option value="Civil">Civil</option>
+                        <option value="Electrical">Electrical</option>
+                        <option value="MBA">MBA</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Degree</label>
+                    <select th:field="*{degree}" class="form-select">
+                        <option value="">Select Degree</option>
+                        <option value="B.E">B.E</option>
+                        <option value="B.Tech">B.Tech</option>
+                        <option value="M.E">M.E</option>
+                        <option value="M.Tech">M.Tech</option>
+                        <option value="MBA">MBA</option>
+                        <option value="MCA">MCA</option>
+                        <option value="BCA">BCA</option>
+                        <option value="BSc">BSc</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Graduation Year</label>
+                    <select th:field="*{graduationYear}" class="form-select">
+                        <option value="">Select Year</option>
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                        <option value="2020">2020</option>
+                        <option value="2019">2019</option>
+                        <option value="2018">2018</option>
+                        <option value="2017">2017</option>
+                        <option value="2016">2016</option>
+                        <option value="2015">2015</option>
+                    </select>
+                </div>
+            </div>
+
+            <p class="section-title"><i class="bi bi-briefcase me-2"></i>Professional Information</p>
+            <div class="row g-3 mb-4">
+                <div class="col-md-6">
+                    <label class="form-label">Company</label>
+                    <input type="text" th:field="*{company}" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Designation</label>
+                    <input type="text" th:field="*{designation}" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Location</label>
+                    <input type="text" th:field="*{location}" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">LinkedIn URL</label>
+                    <input type="text" th:field="*{linkedinUrl}" class="form-control">
+                </div>
+            </div>
+
+            <p class="section-title"><i class="bi bi-file-text me-2"></i>Profile Summary</p>
+            <div class="mb-4">
+                <textarea th:field="*{profileSummary}"
+                          class="form-control" rows="4"></textarea>
+            </div>
+
+            <div class="d-flex gap-3">
+                <button type="submit" class="btn btn-update">
+                    <i class="bi bi-check-circle me-2"></i>Update Alumni
+                </button>
+                <a href="/alumni" class="btn btn-outline-secondary rounded-3 px-4">
+                    <i class="bi bi-x-circle me-2"></i>Cancel
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

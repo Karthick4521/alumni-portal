@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title>Alumni Management</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        body { background: #f0f2f5; }
+        .topnav {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            padding: 15px 30px;
+            display: flex; justify-content: space-between;
+            align-items: center;
+        }
+        .topnav .brand { color: white; font-size: 1.3rem; font-weight: 700; text-decoration: none; }
+        .topnav .nav-links a {
+            color: rgba(255,255,255,0.85);
+            text-decoration: none; margin-left: 20px; font-size: 0.9rem;
+        }
+        .topnav .nav-links a:hover { color: white; }
+        .page-header {
+            background: white; padding: 25px 30px;
+            border-bottom: 1px solid #e9ecef;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .alumni-card {
+            background: white; border: none;
+            border-radius: 14px; padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            height: 100%;
+        }
+        .alumni-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        .avatar-circle {
+            width: 55px; height: 55px; border-radius: 50%;
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 1.3rem; font-weight: 700;
+            flex-shrink: 0;
+        }
+        .badge-dept {
+            background: #e8eaf6; color: #1a237e;
+            border-radius: 20px; padding: 4px 12px;
+            font-size: 0.78rem; font-weight: 600;
+        }
+        .action-btn { border-radius: 8px; padding: 5px 12px; font-size: 0.82rem; }
+    </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<div class="topnav">
+    <a href="/dashboard" class="brand">
+        <i class="bi bi-mortarboard-fill me-2"></i>Alumni Portal
+    </a>
+    <div class="nav-links">
+        <a href="/alumni"><i class="bi bi-people me-1"></i>Alumni</a>
+        <a href="/alumni/directory"><i class="bi bi-search me-1"></i>Directory</a>
+        <a href="/events"><i class="bi bi-calendar me-1"></i>Events</a>
+        <a href="/jobs"><i class="bi bi-briefcase me-1"></i>Jobs</a>
+        <a href="/logout" style="color:#ff8a80;">
+            <i class="bi bi-box-arrow-left me-1"></i>Logout
+        </a>
+    </div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+    <div>
+        <h4 class="fw-bold mb-1">
+            <i class="bi bi-people-fill text-primary me-2"></i>Alumni Management
+        </h4>
+        <p class="text-muted mb-0">
+            Total: <strong th:text="${totalCount}">0</strong> alumni registered
+        </p>
+    </div>
+    <a href="/alumni/add" class="btn btn-primary rounded-3 px-4">
+        <i class="bi bi-person-plus me-2"></i>Add Alumni
+    </a>
+</div>
+
+<div class="container-fluid p-4">
+
+    <!-- Success Message -->
+    <div th:if="${successMsg}"
+         class="alert alert-success alert-dismissible rounded-3 mb-4">
+        <i class="bi bi-check-circle me-2"></i>
+        <span th:text="${successMsg}"></span>
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+
+    <!-- Empty State -->
+    <div th:if="${alumniList.empty}" class="text-center py-5">
+        <i class="bi bi-people" style="font-size:4rem; color:#ccc;"></i>
+        <h5 class="text-muted mt-3">No alumni registered yet</h5>
+        <a href="/alumni/add" class="btn btn-primary mt-3">
+            <i class="bi bi-person-plus me-2"></i>Add First Alumni
+        </a>
+    </div>
+
+    <!-- Alumni Cards Grid -->
+    <div class="row g-4" th:if="${!alumniList.empty}">
+        <div class="col-md-6 col-lg-4"
+             th:each="alumni : ${alumniList}">
+            <div class="alumni-card shadow-sm">
+                <div class="d-flex align-items-center gap-3 mb-3">
+                    <div class="avatar-circle"
+                         th:text="${#strings.substring(alumni.fullName,0,1)}">
+                    </div>
+                    <div>
+                        <h6 class="fw-bold mb-1"
+                            th:text="${alumni.fullName}">Name</h6>
+                        <span class="badge-dept"
+                              th:text="${alumni.department != null ?
+                              alumni.department : 'N/A'}">
+                        </span>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <p class="mb-1 small text-muted" th:if="${alumni.company != null}">
+                        <i class="bi bi-building me-1 text-primary"></i>
+                        <span th:text="${alumni.company}"></span>
+                    </p>
+                    <p class="mb-1 small text-muted" th:if="${alumni.designation != null}">
+                        <i class="bi bi-person-badge me-1 text-success"></i>
+                        <span th:text="${alumni.designation}"></span>
+                    </p>
+                    <p class="mb-1 small text-muted" th:if="${alumni.location != null}">
+                        <i class="bi bi-geo-alt me-1 text-danger"></i>
+                        <span th:text="${alumni.location}"></span>
+                    </p>
+                    <p class="mb-0 small text-muted" th:if="${alumni.graduationYear != null}">
+                        <i class="bi bi-calendar me-1 text-warning"></i>
+                        Batch of <span th:text="${alumni.graduationYear}"></span>
+                    </p>
+                </div>
+
+                <div class="d-flex gap-2">
+                    <a th:href="@{/alumni/view/{id}(id=${alumni.id})}"
+                       class="btn btn-outline-primary action-btn flex-fill">
+                        <i class="bi bi-eye me-1"></i>View
+                    </a>
+                    <a th:href="@{/alumni/edit/{id}(id=${alumni.id})}"
+                       class="btn btn-outline-warning action-btn flex-fill"
+                       sec:authorize="hasAnyRole('ADMIN','ALUMNI')">
+                        <i class="bi bi-pencil me-1"></i>Edit
+                    </a>
+                    <a th:href="@{/alumni/delete/{id}(id=${alumni.id})}"
+                       class="btn btn-outline-danger action-btn"
+                       sec:authorize="hasRole('ADMIN')"
+                       onclick="return confirm('Delete this alumni?')">
+                        <i class="bi bi-trash"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Portal - Login</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { min-height: 100vh; display: flex; }
+
+        .left-panel {
+            width: 55%;
+            background: linear-gradient(135deg, #1a237e, #0d47a1, #1565c0);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 60px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+        .left-panel::before {
+            content: '';
+            position: absolute;
+            width: 300px; height: 300px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            top: -80px; left: -80px;
+        }
+        .left-panel::after {
+            content: '';
+            position: absolute;
+            width: 200px; height: 200px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.05);
+            bottom: -50px; right: -50px;
+        }
+        .left-panel .logo-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .left-panel h1 { font-size: 2.2rem; font-weight: 700; margin-bottom: 15px; }
+        .left-panel p { font-size: 1.1rem; opacity: 0.85; text-align: center; }
+
+        .feature-list { list-style: none; margin-top: 30px; }
+        .feature-list li {
+            padding: 8px 0;
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        .feature-list li i { margin-right: 10px; color: #ffd54f; }
+
+        .right-panel {
+            width: 45%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            padding: 40px;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+        }
+        .login-card h2 {
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 5px;
+        }
+        .login-card p.subtitle {
+            color: #888;
+            margin-bottom: 30px;
+            font-size: 0.95rem;
+        }
+        .form-label { font-weight: 600; color: #444; font-size: 0.9rem; }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            transition: border-color 0.3s;
+            font-size: 0.95rem;
+        }
+        .form-control:focus {
+            border-color: #1a237e;
+            box-shadow: 0 0 0 0.2rem rgba(26,35,126,0.15);
+        }
+        .input-group-text {
+            border-radius: 10px 0 0 10px;
+            border: 2px solid #e9ecef;
+            border-right: none;
+            background: #f8f9fa;
+            color: #1a237e;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #1a237e, #0d47a1);
+            border: none;
+            border-radius: 10px;
+            padding: 13px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(26,35,126,0.4);
+            color: white;
+        }
+        .divider {
+            text-align: center;
+            margin: 20px 0;
+            position: relative;
+            color: #aaa;
+            font-size: 0.85rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 40%;
+            height: 1px;
+            background: #e9ecef;
+        }
+        .divider::before { left: 0; }
+        .divider::after { right: 0; }
+        .btn-register {
+            border: 2px solid #1a237e;
+            border-radius: 10px;
+            padding: 11px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #1a237e;
+            width: 100%;
+            background: transparent;
+            transition: all 0.3s;
+        }
+        .btn-register:hover {
+            background: #1a237e;
+            color: white;
+        }
+        .alert { border-radius: 10px; font-size: 0.9rem; }
+
+        @media (max-width: 768px) {
+            .left-panel { display: none; }
+            .right-panel { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- LEFT PANEL -->
+<div class="left-panel">
+    <div class="logo-icon">🎓</div>
+    <h1>Alumni Portal</h1>
+    <p>Your gateway to connect, grow, and succeed together</p>
+    <ul class="feature-list">
+        <li><i class="bi bi-people-fill"></i> Connect with 500+ Alumni</li>
+        <li><i class="bi bi-briefcase-fill"></i> Explore Job Opportunities</li>
+        <li><i class="bi bi-calendar-event-fill"></i> Join Exclusive Events</li>
+        <li><i class="bi bi-search"></i> Search Alumni Directory</li>
+    </ul>
+</div>
+
+<!-- RIGHT PANEL -->
+<div class="right-panel">
+    <div class="login-card">
+        <h2>Welcome Back! 👋</h2>
+        <p class="subtitle">Sign in to your account to continue</p>
+
+        <!-- Error Message -->
+        <div th:if="${errorMsg}" class="alert alert-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            <span th:text="${errorMsg}"></span>
+        </div>
+
+        <!-- Logout Message -->
+        <div th:if="${logoutMsg}" class="alert alert-success">
+            <i class="bi bi-check-circle me-2"></i>
+            <span th:text="${logoutMsg}"></span>
+        </div>
+
+        <!-- Registration Success -->
+        <div th:if="${param.registered}" class="alert alert-success">
+            <i class="bi bi-check-circle me-2"></i>
+            Registration successful! Please login.
+        </div>
+
+        <!-- Login Form -->
+        <form th:action="@{/login}" method="post">
+            <div class="mb-3">
+                <label class="form-label">Username</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-person"></i>
+                    </span>
+                    <input type="text" name="username"
+                           class="form-control"
+                           placeholder="Enter your username"
+                           required>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text">
+                        <i class="bi bi-lock"></i>
+                    </span>
+                    <input type="password" name="password"
+                           class="form-control"
+                           placeholder="Enter your password"
+                           required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-login">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+        </form>
+
+        <div class="divider">or</div>
+
+        <a href="/register" class="btn btn-register">
+            <i class="bi bi-person-plus me-2"></i>Create New Account
+        </a>
+
+        <div class="text-center mt-3">
+            <a href="/dashboard" class="text-muted text-decoration-none"
+               style="font-size: 0.85rem;">
+                <i class="bi bi-arrow-left me-1"></i>Back to Home
+            </a>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
